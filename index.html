@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seabost Prototype Hosting</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f7fa;
+        --panel: #ffffff;
+        --text: #1f2937;
+        --muted: #667085;
+        --line: #d0d5dd;
+        --brand: #1677ff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 56px 24px 80px;
+      }
+      .hero, .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .hero {
+        padding: 32px;
+        margin-bottom: 20px;
+      }
+      h1, h2, p { margin: 0; }
+      h1 { font-size: 32px; line-height: 1.2; }
+      .sub {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.7;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      a.button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        border: 1px solid var(--brand);
+      }
+      .primary { background: var(--brand); color: #fff; }
+      .secondary { color: var(--brand); background: #fff; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+      }
+      .panel { padding: 24px; }
+      .panel h2 { font-size: 20px; margin-bottom: 12px; }
+      .panel p, .panel li {
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 14px;
+      }
+      code {
+        display: block;
+        margin-top: 12px;
+        padding: 12px;
+        background: #101828;
+        color: #f8fafc;
+        border-radius: 8px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      ul { margin: 0; padding-left: 18px; }
+      @media (max-width: 720px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <section class="hero">
+        <h1>Seabost Prototype Hosting</h1>
+        <p class="sub">
+          这里托管产品经理 AI 工作流产出的 HTML 可交互原型。默认先生成本地 HTML，只有在说“分享原型”时才会发布到这里。
+        </p>
+        <div class="actions">
+          <a class="button primary" href="./setup/">打开配置引导</a>
+          <a class="button secondary" href="./prototypes/index.json">查看原型索引</a>
+        </div>
+      </section>
+      <section class="grid">
+        <article class="panel">
+          <h2>给同事的链接</h2>
+          <p>把下面这个固定链接发给同事，他们可以按步骤完成 GitHub 登录、本机环境变量配置和发布自检。</p>
+          <code>https://wanggeng826-bot.github.io/seabost-prototype-hosting/setup/</code>
+        </article>
+        <article class="panel">
+          <h2>管理员动作</h2>
+          <ul>
+            <li>在 GitHub 仓库里手动邀请同事成为 collaborator</li>
+            <li>权限至少给 Write</li>
+            <li>同事接受邀请后，才能发布原型</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </body>
+  </html>

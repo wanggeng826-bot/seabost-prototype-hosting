@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>原型分享配置引导</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f7fa;
+        --panel: #fff;
+        --line: #d0d5dd;
+        --text: #1f2937;
+        --muted: #667085;
+        --brand: #1677ff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 40px 20px 72px;
+      }
+      .hero, .step, .note {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .hero { padding: 28px; margin-bottom: 20px; }
+      .step, .note { padding: 24px; margin-bottom: 16px; }
+      h1, h2, h3, p { margin: 0; }
+      h1 { font-size: 30px; }
+      h2 { font-size: 18px; margin-bottom: 12px; }
+      .sub, li { color: var(--muted); line-height: 1.7; }
+      ol, ul { margin: 0; padding-left: 22px; }
+      .command {
+        margin-top: 12px;
+        padding: 14px;
+        border-radius: 8px;
+        background: #101828;
+        color: #f8fafc;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 13px;
+      }
+      .row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+      button, a.button {
+        min-height: 40px;
+        padding: 0 14px;
+        border-radius: 8px;
+        border: 1px solid var(--brand);
+        background: #fff;
+        color: var(--brand);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+      }
+      .primary {
+        background: var(--brand);
+        color: #fff;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: #eef4ff;
+        color: #175cd3;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .warn {
+        border-color: #f7b955;
+        background: #fffaf0;
+      }
+      .ok {
+        border-color: #84cc16;
+        background: #f7fee7;
+      }
+      @media (max-width: 720px) {
+        .wrap { padding: 24px 14px 48px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <section class="hero">
+        <div class="badge">HTML 原型分享配置</div>
+        <h1>同事原型分享配置引导</h1>
+        <p class="sub" style="margin-top: 12px;">
+          这个页面用于配置本机发布权限。默认只生成本地 HTML；只有在说“分享原型”时，Codex 才会发布到统一托管仓库。
+        </p>
+      </section>
+
+      <section class="note warn">
+        <h2>先看这个限制</h2>
+        <p class="sub">
+          这个页面不能自动帮你拿到 GitHub 写权限。仓库 owner 必须先在 GitHub 上手动邀请你成为 collaborator。你接受邀请后，才能发布原型。
+        </p>
+      </section>
+
+      <section class="step">
+        <h2>Step 1. 接受 GitHub 仓库邀请</h2>
+        <ol>
+          <li>把你的 GitHub 用户名发给管理员。</li>
+          <li>管理员在仓库里给你加 Write 权限。</li>
+          <li>你在 GitHub 邮件或通知里接受邀请。</li>
+        </ol>
+      </section>
+
+      <section class="step">
+        <h2>Step 2. 登录 GitHub CLI</h2>
+        <div class="command">gh auth login -h github.com</div>
+        <ul style="margin-top: 12px;">
+          <li>Git protocol 选 <strong>HTTPS</strong></li>
+          <li>Authenticate Git with your GitHub credentials 选 <strong>Y</strong></li>
+          <li>Authentication method 选 <strong>Login with a web browser</strong></li>
+        </ul>
+      </section>
+
+      <section class="step">
+        <h2>Step 3. 配置环境变量</h2>
+        <p class="sub">把下面这段写入你的终端配置文件。</p>
+        <div class="command" id="envCommand">echo 'export PROTOTYPE_HOSTING_REPO=wanggeng826-bot/seabost-prototype-hosting' >> ~/.zshrc
+echo 'export PROTOTYPE_BASE_URL=https://wanggeng826-bot.github.io/seabost-prototype-hosting' >> ~/.zshrc
+source ~/.zshrc</div>
+        <div class="row">
+          <button class="primary" id="copyEnv">复制配置命令</button>
+        </div>
+      </section>
+
+      <section class="step">
+        <h2>Step 4. 自检</h2>
+        <div class="command">gh auth status
+echo $PROTOTYPE_HOSTING_REPO
+echo $PROTOTYPE_BASE_URL
+npm run prototype:publish -- --help</div>
+      </section>
+
+      <section class="step ok">
+        <h2>Step 5. 实际使用</h2>
+        <ul>
+          <li><strong>生成原型</strong>：只生成本地 HTML 文件</li>
+          <li><strong>分享原型</strong>：发布到 GitHub Pages，并返回在线链接</li>
+        </ul>
+      </section>
+    </main>
+
+    <script>
+      document.getElementById("copyEnv").addEventListener("click", async () => {
+        const text = document.getElementById("envCommand").textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+          document.getElementById("copyEnv").textContent = "已复制";
+        } catch {
+          document.getElementById("copyEnv").textContent = "复制失败，请手动复制";
+        }
+      });
+    </script>
+  </body>
+  </html>
