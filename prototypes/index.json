@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-26T02:24:26+08:00",
-  "count": 5,
+  "generatedAt": "2026-05-26T20:22:42+08:00",
+  "count": 6,
   "prototypes": [
     {
       "prototypeId": "ai-20260526-015153",
@@ -56,6 +56,17 @@
       "updatedAt": "2026-05-26T02:24:22+08:00",
       "path": "prototypes/ai-workspace/ai-20260526-022422",
       "url": "https://wanggeng826-bot.github.io/seabost-prototype-hosting/prototypes/ai-workspace/ai-20260526-022422/"
+    },
+    {
+      "prototypeId": "ai-20260526-202236",
+      "title": "AI工作台",
+      "businessSystem": "ai-workspace",
+      "owner": "wanggeng826-bot",
+      "sourcePath": "prototype/ai-workspace-v2",
+      "createdAt": "2026-05-26T20:22:36+08:00",
+      "updatedAt": "2026-05-26T20:22:36+08:00",
+      "path": "prototypes/ai-workspace/ai-20260526-202236",
+      "url": "https://wanggeng826-bot.github.io/seabost-prototype-hosting/prototypes/ai-workspace/ai-20260526-202236/"
     }
   ]
 }

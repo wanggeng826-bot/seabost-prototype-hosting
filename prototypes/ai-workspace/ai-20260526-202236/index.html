@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 工作台 v2 · 跨境电商 ERP</title>
+<link rel="stylesheet" href="./tokens.css">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<div class="toast" id="toast">操作成功</div>
+
+<!-- =============================================================
+     ERP SHELL
+     ============================================================= -->
+<div class="c-shell" data-collapsed="false" id="shell">
+
+  <!-- Sider -->
+  <aside class="c-shell__sider" aria-label="主导航">
+    <div class="c-shell__brand">
+      <span class="c-shell__brand-logo">AI</span>
+      <span class="c-shell__brand-text">AI 工作台</span>
+    </div>
+    <ul class="c-shell__menu" role="menu">
+      <li class="c-shell__menu-group">核心</li>
+      <li class="c-shell__menu-item c-shell__menu-item--active" data-page="ai-workspace" role="menuitem">
+        <span class="c-shell__menu-icon">🤖</span><span>AI 工作台</span>
+      </li>
+      <li class="c-shell__menu-item" data-page="agent-market" role="menuitem">
+        <span class="c-shell__menu-icon">🏪</span><span>Agent 市场</span>
+      </li>
+      <li class="c-shell__menu-item" data-page="workspace-mgmt" role="menuitem">
+        <span class="c-shell__menu-icon">📁</span><span>工作管理</span>
+      </li>
+      <li class="c-shell__menu-group">工具</li>
+      <li class="c-shell__menu-item" data-page="listing" role="menuitem">
+        <span class="c-shell__menu-icon">📝</span><span>Listing 优化</span>
+      </li>
+      <li class="c-shell__menu-item" data-page="image" role="menuitem">
+        <span class="c-shell__menu-icon">🖼</span><span>图片工坊</span>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Header -->
+  <header class="c-shell__header">
+    <span class="c-shell__collapse-btn" title="折叠侧边栏" data-action="collapse">☰</span>
+    <div class="c-shell__header-search">
+      <span class="c-shell__header-search-icon">🔍</span>
+      <input class="input" placeholder="搜索菜单、Agent、会话历史…" />
+    </div>
+    <div class="c-shell__header-actions">
+      <span class="c-shell__icon-btn" title="帮助">❓</span>
+      <span class="c-shell__icon-btn" title="通知">🔔</span>
+      <div class="c-shell__avatar" title="张明远">张</div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <nav class="c-shell__crumb" aria-label="面包屑">
+    <a href="#">ERP</a>
+    <span class="c-shell__crumb-sep">/</span>
+    <span class="c-shell__crumb-current" id="crumbCurrent">AI 工作台</span>
+  </nav>
+
+  <!-- Content -->
+  <main class="c-shell__content">
+
+    <!-- ==================== AI WORKSPACE ==================== -->
+    <div class="page active" id="page-ai-workspace">
+      <div class="ai-workspace">
+        <!-- Left Sidebar -->
+        <div class="ai-workspace__sidebar">
+          <div class="aws-sidebar__top">
+            <button class="aws-sidebar__new" onclick="newConversation()">
+              <span>＋</span> 新对话
+            </button>
+          </div>
+          <div class="aws-sidebar__list" id="conversationList">
+            <div class="aws-sidebar__group">今天</div>
+            <div class="aws-sidebar__item aws-sidebar__item--active" data-conv="1" onclick="switchConversation(1)">
+              <span>💬</span> Listing 优化建议
+            </div>
+            <div class="aws-sidebar__group">昨天</div>
+            <div class="aws-sidebar__item" data-conv="2" onclick="switchConversation(2)">
+              <span>🖼</span> 生成商品主图
+            </div>
+            <div class="aws-sidebar__item" data-conv="3" onclick="switchConversation(3)">
+              <span>📊</span> 广告诊断分析
+            </div>
+            <div class="aws-sidebar__group">7 天内</div>
+            <div class="aws-sidebar__item" data-conv="4" onclick="switchConversation(4)">
+              <span>🤖</span> 智能客服脚本
+            </div>
+            <div class="aws-sidebar__item" data-conv="5" onclick="switchConversation(5)">
+              <span>💡</span> 竞品调研报告
+            </div>
+          </div>
+          <div class="aws-sidebar__bottom">
+            <div class="aws-sidebar__link" onclick="switchPage('agent-market')">
+              <span>🏪</span> 浏览 Agent 市场
+            </div>
+            <div class="aws-sidebar__link" onclick="switchPage('workspace-mgmt')">
+              <span>📁</span> 工作管理
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Chat -->
+        <div class="ai-workspace__main">
+          <div class="aws-main__header">
+            <div class="aws-main__title-section">
+              <div class="aws-main__title" id="chatTitle">Listing 优化建议</div>
+              <button class="aws-main__agent-switch" onclick="toggleAgentSelector()" id="agentSwitchBtn" title="切换 Agent">
+                <span id="agentSwitchLabel">📝 Listing 优化专家</span>
+                <span>▼</span>
+              </button>
+            </div>
+            <div class="aws-main__actions">
+              <button class="aws-main__model" onclick="toggleModelDropdown()" id="modelSelector">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--color-primary-6);display:inline-block;"></span>
+                <span>Claude 4</span>
+                <span>▼</span>
+              </button>
+              <button class="aws-input__btn" title="收起右侧面板" onclick="toggleRightPanel()">⇄</button>
+              <button class="aws-input__btn" title="更多" onclick="showToast('更多功能开发中')">⋮</button>
+            </div>
+          </div>
+
+          <!-- Agent Selector Dropdown -->
+          <div id="agentSelectorDropdown" style="display:none;position:absolute;top:52px;left:0;z-index:200;background:var(--color-bg-elevated);border:1px solid var(--color-border-secondary);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);padding:var(--space-2);min-width:300px;max-height:400px;overflow-y:auto;margin:var(--space-1);">
+            <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);padding:var(--space-2) var(--space-3);font-weight:var(--font-weight-medium);">切换 Agent</div>
+            <div id="agentSelectorList" style="display:flex;flex-direction:column;gap:var(--space-1);"></div>
+          </div>
+
+          <!-- Model Dropdown (absolute positioned via JS) -->
+          <div id="modelDropdown" style="display:none;position:absolute;top:52px;right:320px;z-index:200;background:var(--color-bg-elevated);border:1px solid var(--color-border-secondary);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);padding:var(--space-2);min-width:180px;">
+            <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);padding:var(--space-2);">选择模型</div>
+            <div class="model-options" id="modelOptions">
+              <div class="model-option model-option--active" data-model="claude" onclick="selectModel('claude')">
+                <span class="model-option__dot" style="background:var(--color-primary-6)"></span> Claude 4
+              </div>
+              <div class="model-option" data-model="gpt" onclick="selectModel('gpt')">
+                <span class="model-option__dot" style="background:var(--color-success)"></span> GPT-4o
+              </div>
+              <div class="model-option" data-model="gemini" onclick="selectModel('gemini')">
+                <span class="model-option__dot" style="background:var(--color-info)"></span> Gemini 2.5
+              </div>
+              <div class="model-option" data-model="deepseek" onclick="selectModel('deepseek')">
+                <span class="model-option__dot" style="background:var(--color-warning)"></span> DeepSeek V3
+              </div>
+            </div>
+          </div>
+
+          <!-- Welcome Page -->
+          <div class="aws-main__welcome" id="welcomePage" style="display:none;">
+            <div class="welcome-header">
+              <h2>👋 欢迎使用 AI 工作台</h2>
+              <p>选择一个 Agent 开始对话，或直接输入问题</p>
+            </div>
+            <div class="welcome-agents" id="welcomeAgentsList">
+              <!-- Agent cards will be rendered here by JS -->
+            </div>
+          </div>
+
+          <div class="aws-main__messages" id="chatMessages">
+            <div class="chat-msg chat-msg--bot" id="msg-1">
+              <div class="chat-msg__avatar chat-msg__avatar--bot">🤖</div>
+              <div class="chat-msg__body">
+                <div class="chat-msg__bubble">你好！我是 AI 系统顾问。当前已绑定「Listing 优化专家」Agent，可以帮你：</div>
+                <div class="chat-msg__time">刚刚</div>
+              </div>
+              <button class="chat-msg__delete" title="删除此消息" onclick="deleteChatMsg(1)">×</button>
+            </div>
+            <div class="chat-msg chat-msg--user" id="msg-2">
+              <div class="chat-msg__avatar chat-msg__avatar--user">张</div>
+              <div class="chat-msg__body">
+                <div class="chat-msg__bubble">帮我诊断一下 B0ABC12345 这个 ASIN 的 Listing</div>
+                <div class="chat-msg__time">刚刚</div>
+              </div>
+              <button class="chat-msg__delete" title="删除此消息" onclick="deleteChatMsg(2)">×</button>
+            </div>
+            <div class="chat-msg chat-msg--bot" id="msg-3">
+              <div class="chat-msg__avatar chat-msg__avatar--bot">🤖</div>
+              <div class="chat-msg__body">
+                <div class="chat-msg__bubble">好的，正在从 Amazon US 获取 Listing 数据…
+
+获取完成。诊断结果如下：
+
+⚠️ **标题过长** — 当前 198 字符，建议压缩至 180 以内
+📉 **关键词缺失** — 缺少 "noise cancelling wireless" 等高流量词
+🖼 **主图建议** — 当前主图背景偏暗，建议改用纯白底
+⭐ **评价回复** — 有 3 条差评未回复，建议优先处理
+
+需要我直接生成优化方案吗？</div>
+                <div class="chat-msg__time">刚刚</div>
+              </div>
+              <button class="chat-msg__delete" title="删除此消息" onclick="deleteChatMsg(3)">×</button>
+            </div>
+          </div>
+
+          <div class="aws-main__quick" id="chatQuick">
+            <button class="aws-quick-btn" onclick="quickChat('生成优化方案')">✨ 生成优化方案</button>
+            <button class="aws-quick-btn" onclick="quickChat('查看竞品对比')">📊 竞品对比</button>
+            <button class="aws-quick-btn" onclick="quickChat('帮我写回复模板')">💬 差评回复</button>
+            <button class="aws-quick-btn" onclick="quickChat('生成 A+ 页面文案')">📝 A+ 文案</button>
+          </div>
+
+          <!-- @ Command Panel -->
+          <div class="at-command-panel" id="atCommandPanel" data-open="false">
+            <div class="at-command-panel__head">
+              <span>@ 命令面板</span>
+              <button onclick="closeAtCommandPanel()" style="border:none;background:none;cursor:pointer;color:var(--color-text-tertiary);font-size:20px;">✕</button>
+            </div>
+            <div class="at-command-panel__body">
+              <div class="at-command-section">
+                <div class="at-command-section__title">🤖 切换 Agent</div>
+                <div class="at-command-list" id="atAgentList"></div>
+              </div>
+              <div class="at-command-section">
+                <div class="at-command-section__title">⚡ 快捷命令</div>
+                <div class="at-command-list">
+                  <div class="at-command-item" onclick="atInsertCommand('生成优化方案')"><span class="at-command-item__icon">✨</span><div class="at-command-item__info"><div class="at-command-item__name">生成优化方案</div><div class="at-command-item__desc">针对当前 Listing 生成优化建议</div></div></div>
+                  <div class="at-command-item" onclick="atInsertCommand('查看竞品对比')"><span class="at-command-item__icon">📊</span><div class="at-command-item__info"><div class="at-command-item__name">查看竞品对比</div><div class="at-command-item__desc">对比竞品价格、评价、排名</div></div></div>
+                  <div class="at-command-item" onclick="atInsertCommand('帮我写回复模板')"><span class="at-command-item__icon">💬</span><div class="at-command-item__info"><div class="at-command-item__name">帮我写回复模板</div><div class="at-command-item__desc">生成差评/客服回复消息</div></div></div>
+                  <div class="at-command-item" onclick="atInsertCommand('生成 A+ 页面文案')"><span class="at-command-item__icon">📝</span><div class="at-command-item__info"><div class="at-command-item__name">生成 A+ 页面文案</div><div class="at-command-item__desc">生成品牌故事 & 图文模块</div></div></div>
+                  <div class="at-command-item" onclick="atInsertCommand('分析广告数据')"><span class="at-command-item__icon">📈</span><div class="at-command-item__info"><div class="at-command-item__name">分析广告数据</div><div class="at-command-item__desc">诊断广告投放效率与 ACoS</div></div></div>
+                  <div class="at-command-item" onclick="atInsertCommand('翻译标题到多语种')"><span class="at-command-item__icon">🌐</span><div class="at-command-item__info"><div class="at-command-item__name">翻译标题到多语种</div><div class="at-command-item__desc">适配 Shopee / Lazada 各站点</div></div></div>
+                </div>
+              </div>
+              <div class="at-command-section">
+                <div class="at-command-section__title">🛠 Agent 管理</div>
+                <div class="at-command-list">
+                  <div class="at-command-item" onclick="openAgentBuilder();closeAtCommandPanel();"><span class="at-command-item__icon">➕</span><div class="at-command-item__info"><div class="at-command-item__name">创建新 Agent</div><div class="at-command-item__desc">自定义 Prompt、知识库与模型</div></div></div>
+                  <div class="at-command-item" onclick="switchPage('agent-market');closeAtCommandPanel();"><span class="at-command-item__icon">🏪</span><div class="at-command-item__info"><div class="at-command-item__name">浏览 Agent 市场</div><div class="at-command-item__desc">发现更多官方和社区 Agent</div></div></div>
+                  <div class="at-command-item" onclick="atInsertCommand('/clear')"><span class="at-command-item__icon">🗑</span><div class="at-command-item__info"><div class="at-command-item__name">清空对话</div><div class="at-command-item__desc">重置当前会话上下文</div></div></div>
+                  <div class="at-command-item" onclick="switchPage('workspace-mgmt');closeAtCommandPanel();"><span class="at-command-item__icon">📁</span><div class="at-command-item__info"><div class="at-command-item__name">查看历史任务</div><div class="at-command-item__desc">打开工作管理页面</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="aws-main__input">
+            <div class="aws-input">
+              <textarea id="chatInput" placeholder="输入问题，@ 唤起 Agent…" rows="1" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendChat();}"></textarea>
+              <div class="aws-input__actions">
+                <button class="aws-input__btn" title="附件" onclick="showToast('附件功能开发中')">📎</button>
+                <button class="aws-input__btn" id="atBtn" title="@ 命令面板" onclick="toggleAtCommandPanel()">@</button>
+                <button class="aws-input__send" id="sendBtn" onclick="sendChat()">➤</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="ai-workspace__right" id="rightPanel" data-collapsed="false">
+          <div class="aws-right__header">
+            <span class="aws-right__title">当前 Agent</span>
+            <span class="aws-right__close" onclick="toggleRightPanel()">×</span>
+          </div>
+          <div class="aws-right__body">
+            <div class="aws-right__section">
+              <div class="aws-right__agent">
+                <div class="aws-right__agent-avatar">📝</div>
+                <div class="aws-right__agent-info">
+                  <div class="aws-right__agent-name">Listing 优化专家</div>
+                  <div class="aws-right__agent-desc">官方内置 · 多平台 Listing 诊断与优化</div>
+                </div>
+              </div>
+            </div>
+            <div class="aws-right__section">
+              <div class="aws-right__section-title">模型设置</div>
+              <div class="model-options">
+                <div class="model-option model-option--active">
+                  <span class="model-option__dot" style="background:var(--color-primary-6)"></span> Claude 4（默认）
+                </div>
+                <div class="model-option">
+                  <span class="model-option__dot" style="background:var(--color-success)"></span> GPT-4o
+                </div>
+                <div class="model-option">
+                  <span class="model-option__dot" style="background:var(--color-info)"></span> Gemini 2.5
+                </div>
+                <div class="model-option">
+                  <span class="model-option__dot" style="background:var(--color-warning)"></span> DeepSeek V3
+                </div>
+              </div>
+              <div class="c-field" style="margin-top:var(--space-3);">
+                <label style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);">本 Agent 绑定的默认模型，可随时在对话中切换</label>
+              </div>
+            </div>
+            <!-- Agent Knowledge Base (read-only for others' agents) -->
+            <div class="aws-right__section" id="kbSection">
+              <div class="aws-right__section-title">Agent 知识库 <span style="font-size:11px;color:var(--color-text-tertiary);font-weight:400;" id="kbOwnerHint"></span></div>
+              <div style="display:flex;flex-direction:column;gap:var(--space-2);" id="kbFileList">
+                <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2);border-radius:var(--radius-sm);border:1px solid var(--color-border-secondary);font-size:var(--font-size-sm);" class="kb-file-item" data-id="1">
+                  <span>📄</span> <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;">Amazon A9 算法指南.pdf</span>
+                  <button class="kb-delete-btn" onclick="onDeleteKBClick(1)" title="删除">×</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2);border-radius:var(--radius-sm);border:1px solid var(--color-border-secondary);font-size:var(--font-size-sm);" class="kb-file-item" data-id="2">
+                  <span>📄</span> <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;">平台关键词白皮书.docx</span>
+                  <button class="kb-delete-btn" onclick="onDeleteKBClick(2)" title="删除">×</button>
+                </div>
+              </div>
+              <button class="btn btn--sm" style="width:100%;margin-top:var(--space-1);" id="kbUploadBtn" onclick="onUploadKBClick()">+ 上传文件</button>
+            </div>
+
+            <!-- Conversation Attachments (personal, always editable) -->
+            <div class="aws-right__section">
+              <div class="aws-right__section-title">本次对话附件</div>
+              <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+                <div style="padding:var(--space-3);text-align:center;color:var(--color-text-tertiary);font-size:var(--font-size-xs);border:1px dashed var(--color-border);border-radius:var(--radius-sm);">
+                  拖拽文件到此处，或点击上传
+                </div>
+                <button class="btn btn--sm" style="width:100%;" onclick="uploadAttachment()">+ 上传附件</button>
+              </div>
+            </div>
+
+            <!-- Context Management Section -->
+            <div class="aws-right__section">
+              <div class="aws-right__section-title">上下文管理</div>
+              <div style="display:flex;flex-direction:column;gap:var(--space-2);font-size:var(--font-size-xs);">
+                <div style="padding:var(--space-2);background:var(--color-bg-spotlight);border-radius:var(--radius-sm);">
+                  <div style="color:var(--color-text-tertiary);margin-bottom:var(--space-1);">当前上下文</div>
+                  <div style="color:var(--color-text);font-weight:var(--font-weight-semibold);">
+                    <span id="contextMsgCount">3</span> 条消息
+                  </div>
+                  <div style="color:var(--color-text-tertiary);font-size:10px;margin-top:2px;">
+                    约 <span id="contextTokens">1,240</span> Tokens
+                  </div>
+                </div>
+                <button class="btn btn--sm" style="width:100%;" onclick="toggleContextPanel()">📋 管理对话</button>
+                <button class="btn btn--sm" style="width:100%;" onclick="compressContext()">📝 AI 总结上下文</button>
+              </div>
+            </div>
+            <div class="aws-right__section">
+              <div class="aws-right__section-title">操作</div>
+              <div style="display:flex;flex-direction:column;gap:var(--space-2);" id="rightPanelActions">
+                <button class="btn btn--sm action-edit" style="width:100%;" onclick="onEditAgentClick()">✏️ 编辑此 Agent</button>
+                <button class="btn btn--sm action-share" style="width:100%;" onclick="onShareAgentClick()">📤 分享 Agent</button>
+                <button class="btn btn--sm action-fork" style="width:100%;display:none;" onclick="showToast('Fork 功能开发中')">🍴 Fork 此 Agent</button>
+                <button class="btn btn--sm" style="width:100%;color:var(--color-error);border-color:var(--color-error-border);" onclick="clearAllContext()">🗑 清空对话</button>
+              </div>
+            </div>
+
+            <!-- Demo: Permission Preview (for dev/test only) -->
+            <div class="aws-right__section" style="border-top:2px dashed var(--color-border-secondary);padding-top:var(--space-3);margin-top:var(--space-2);">
+              <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:var(--space-2);display:flex;align-items:center;gap:var(--space-1);">
+                <span>🧪</span> <span id="demoPermissionLabel">👤 当前视角：Agent 创建者</span>
+              </div>
+              <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:var(--space-2);">切换 Agent 体验不同权限：</div>
+              <div style="display:flex;flex-direction:column;gap:var(--space-1);">
+                <button class="btn btn--sm" style="width:100%;font-size:11px;justify-content:flex-start;" onclick="switchAgent(1)">📝 Listing 优化专家（官方 · 可 Fork）</button>
+                <button class="btn btn--sm" style="width:100%;font-size:11px;justify-content:flex-start;" onclick="switchAgent(3)">📊 广告诊断师（他人 · 可 Fork）</button>
+                <button class="btn btn--sm" style="width:100%;font-size:11px;justify-content:flex-start;" onclick="switchAgent(5)">🛒 Shopee 上新助手（他人 · 不可 Fork）</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== AGENT MARKET ==================== -->
+    <div class="page" id="page-agent-market">
+      <div class="agent-market__header">
+        <div>
+          <h1 style="margin:0;font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);">Agent 市场</h1>
+          <p style="margin:var(--space-1) 0 0;font-size:var(--font-size-sm);color:var(--color-text-secondary);">发现和使用团队分享的 AI 智能体，也可以基于现有 Agent 二次创作</p>
+        </div>
+        <div style="display:flex;gap:var(--space-2);">
+          <input class="input" placeholder="搜索 Agent…" style="width:240px;" />
+          <button class="btn btn--primary" onclick="openAgentBuilder()">+ 创建 Agent</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:var(--space-2);margin-bottom:var(--space-4);flex-wrap:wrap;">
+        <span class="tag tag--processing" style="cursor:pointer;">全部</span>
+        <span class="tag tag--default" style="cursor:pointer;">运营</span>
+        <span class="tag tag--default" style="cursor:pointer;">设计</span>
+        <span class="tag tag--default" style="cursor:pointer;">客服</span>
+        <span class="tag tag--default" style="cursor:pointer;">数据</span>
+        <span class="tag tag--default" style="cursor:pointer;">我创建的</span>
+      </div>
+
+      <div class="agent-market__grid" id="agentMarketGrid">
+        <!-- Cards rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ==================== WORKSPACE MANAGEMENT ==================== -->
+    <div class="page" id="page-workspace-mgmt">
+      <header style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-4);">
+        <div>
+          <h1 style="margin:0;font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);">工作管理</h1>
+          <p style="margin:var(--space-1) 0 0;font-size:var(--font-size-sm);color:var(--color-text-secondary);">管理你的对话历史、Agent、任务记录和收藏</p>
+        </div>
+      </header>
+
+      <div class="ws-mgmt__tabs">
+        <span class="ws-mgmt__tab ws-mgmt__tab--active" data-tab="history" onclick="switchWsTab('history')">对话历史</span>
+        <span class="ws-mgmt__tab" data-tab="my-agents" onclick="switchWsTab('my-agents')">我的 Agent</span>
+        <span class="ws-mgmt__tab" data-tab="tasks" onclick="switchWsTab('tasks')">任务记录</span>
+        <span class="ws-mgmt__tab" data-tab="favorites" onclick="switchWsTab('favorites')">收藏</span>
+      </div>
+
+      <!-- Tab: History -->
+      <div class="ws-panel active" id="panel-history">
+        <div style="display:flex;gap:var(--space-3);margin-bottom:var(--space-4);">
+          <input class="input" placeholder="搜索对话内容…" style="max-width:320px;" />
+          <div class="ant-select" data-value="全部 Agent" style="min-width:140px;">
+            <div class="ant-select-trigger" onclick="toggleAntSelect(this)"><span>全部 Agent</span><span>▼</span></div>
+            <div class="ant-select-dropdown">
+              <div class="ant-select-option ant-select-option--active" onclick="selectAntOption(this,'全部 Agent')">全部 Agent</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'Listing 优化专家')">Listing 优化专家</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'图片生成助手')">图片生成助手</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'广告诊断师')">广告诊断师</div>
+            </div>
+          </div>
+          <div class="ant-select" data-value="全部时间" style="min-width:120px;">
+            <div class="ant-select-trigger" onclick="toggleAntSelect(this)"><span>全部时间</span><span>▼</span></div>
+            <div class="ant-select-dropdown">
+              <div class="ant-select-option ant-select-option--active" onclick="selectAntOption(this,'全部时间')">全部时间</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'今天')">今天</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'7 天内')">7 天内</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'30 天内')">30 天内</div>
+            </div>
+          </div>
+        </div>
+        <div class="conv-list" id="historyList">
+          <!-- JS rendered -->
+        </div>
+      </div>
+
+      <!-- Tab: My Agents -->
+      <div class="ws-panel" id="panel-my-agents">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4);">
+          <div style="display:flex;gap:var(--space-3);">
+            <input class="input" placeholder="搜索我的 Agent…" style="max-width:320px;" />
+          </div>
+          <button class="btn btn--primary" onclick="openAgentBuilder()">+ 新建 Agent</button>
+        </div>
+        <div class="agent-market__grid" id="myAgentsGrid">
+          <!-- JS rendered -->
+        </div>
+      </div>
+
+      <!-- Tab: Tasks -->
+      <div class="ws-panel" id="panel-tasks">
+        <div style="display:flex;gap:var(--space-3);margin-bottom:var(--space-4);">
+          <div class="ant-select" data-value="全部类型" style="min-width:120px;">
+            <div class="ant-select-trigger" onclick="toggleAntSelect(this)"><span>全部类型</span><span>▼</span></div>
+            <div class="ant-select-dropdown">
+              <div class="ant-select-option ant-select-option--active" onclick="selectAntOption(this,'全部类型')">全部类型</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'Listing 优化')">Listing 优化</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'图片生成')">图片生成</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'广告诊断')">广告诊断</div>
+            </div>
+          </div>
+          <div class="ant-select" data-value="全部状态" style="min-width:120px;">
+            <div class="ant-select-trigger" onclick="toggleAntSelect(this)"><span>全部状态</span><span>▼</span></div>
+            <div class="ant-select-dropdown">
+              <div class="ant-select-option ant-select-option--active" onclick="selectAntOption(this,'全部状态')">全部状态</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'已完成')">已完成</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'进行中')">进行中</div>
+              <div class="ant-select-option" onclick="selectAntOption(this,'失败')">失败</div>
+            </div>
+          </div>
+        </div>
+        <div class="surface-panel" style="overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;font-size:var(--font-size-sm);">
+            <thead>
+              <tr style="border-bottom:1px solid var(--color-border-secondary);background:var(--color-bg-spotlight);">
+                <th style="text-align:left;padding:var(--space-3) var(--space-4);font-weight:var(--font-weight-medium);color:var(--color-text-secondary);">任务</th>
+                <th style="text-align:left;padding:var(--space-3) var(--space-4);font-weight:var(--font-weight-medium);color:var(--color-text-secondary);">Agent</th>
+                <th style="text-align:left;padding:var(--space-3) var(--space-4);font-weight:var(--font-weight-medium);color:var(--color-text-secondary);">时间</th>
+                <th style="text-align:left;padding:var(--space-3) var(--space-4);font-weight:var(--font-weight-medium);color:var(--color-text-secondary);">状态</th>
+                <th style="text-align:left;padding:var(--space-3) var(--space-4);font-weight:var(--font-weight-medium);color:var(--color-text-secondary);">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tasksTableBody">
+              <!-- JS rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Favorites -->
+      <div class="ws-panel" id="panel-favorites">
+        <div class="conv-list" id="favoritesList">
+          <div class="conv-item">
+            <div class="conv-item__icon">⭐</div>
+            <div class="conv-item__info">
+              <div class="conv-item__title">Amazon 标题优化 Prompt 模板</div>
+              <div class="conv-item__meta">收藏于 2026-05-15 · 运营工具</div>
+            </div>
+            <button class="btn btn--sm">使用</button>
+          </div>
+          <div class="conv-item">
+            <div class="conv-item__icon">⭐</div>
+            <div class="conv-item__info">
+              <div class="conv-item__title">TikTok 爆款文案公式</div>
+              <div class="conv-item__meta">收藏于 2026-05-14 · 营销工具</div>
+            </div>
+            <button class="btn btn--sm">使用</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== LISTING OPTIMIZATION ==================== -->
+    <div class="page" id="page-listing">
+      <div class="listing-page">
+        <header style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-4);">
+          <div>
+            <h1 style="margin:0;font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);">Listing 优化</h1>
+            <p style="margin:var(--space-1) 0 0;font-size:var(--font-size-sm);color:var(--color-text-secondary);">输入 ASIN 或 Listing ID，AI 自动诊断并生成优化方案</p>
+          </div>
+          <button class="btn btn--primary" onclick="switchPage('ai-workspace');quickChat('帮我优化 Listing')">🤖 在 AI 工作台中打开</button>
+        </header>
+
+        <div style="display:flex;gap:var(--space-2);margin-bottom:var(--space-4);">
+          <button class="tag platform-tag tag--selected" onclick="selectPlatform(this)" data-platform="amazon">Amazon</button>
+          <button class="tag platform-tag tag--default" onclick="selectPlatform(this)" data-platform="shopee">Shopee</button>
+          <button class="tag platform-tag tag--default" onclick="selectPlatform(this)" data-platform="lazada">Lazada</button>
+          <button class="tag platform-tag tag--default" onclick="selectPlatform(this)" data-platform="tiktok">TikTok</button>
+        </div>
+
+        <div class="listing-input-row">
+          <input class="input" id="listingInput" placeholder="输入 ASIN、Listing ID 或粘贴链接…" value="B0ABC12345" />
+          <button class="btn btn--primary" onclick="fetchListing()">获取并诊断</button>
+        </div>
+
+        <div class="listing-result">
+          <div class="listing-panel">
+            <div class="listing-panel__header">
+              <span class="listing-panel__title">原始 Listing</span>
+              <span class="tag tag--default">Amazon US</span>
+            </div>
+            <div class="listing-panel__body" id="listingOriginal">
+              <div class="listing-empty">
+                <div class="listing-empty__icon">📋</div>
+                <p>输入 ASIN 后自动拉取数据</p>
+              </div>
+            </div>
+          </div>
+          <div class="listing-panel">
+            <div class="listing-panel__header">
+              <span class="listing-panel__title">AI 优化结果</span>
+              <div style="display:flex;gap:var(--space-1);">
+                <span class="tag tag--processing">Claude 4</span>
+              </div>
+            </div>
+            <div class="listing-panel__body" id="listingOptimized">
+              <div class="listing-empty">
+                <div class="listing-empty__icon">✨</div>
+                <p>获取 Listing 后生成优化方案</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== IMAGE STUDIO ==================== -->
+    <div class="page" id="page-image">
+      <header style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-4);">
+        <div>
+          <h1 style="margin:0;font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);">图片工坊 (V3 高级视觉引擎)</h1>
+          <p style="margin:var(--space-1) 0 0;font-size:var(--font-size-sm);color:var(--color-text-secondary);">基于 Agent 调度的图生图与高级修图工具链</p>
+        </div>
+        <button class="btn btn--primary" onclick="switchPage('ai-workspace');quickChat('帮我处理商品图')">🤖 在 AI 工作台中打开</button>
+      </header>
+
+      <div class="image-studio-layout" style="display:flex;gap:var(--space-4);height:calc(100vh - 180px);background:var(--color-bg-container);border:1px solid var(--color-border-secondary);border-radius:var(--radius-lg);overflow:hidden;">
+        
+        <!-- Left Sub-sidebar (Tool Menu) -->
+        <div class="is-sidebar" id="is-sidebar-menu" style="width:260px;border-right:1px solid var(--color-border-secondary);display:flex;flex-direction:column;padding:var(--space-3) 0;overflow-y:auto;">
+          <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);padding:0 var(--space-4) var(--space-2);font-weight:var(--font-weight-medium);">Agent 工具链</div>
+          
+          <!-- Tool items will be injected here by JS, but we hardcode the first one as active for initial load -->
+        </div>
+
+        <!-- Main Content Workspace -->
+        <div class="is-main" style="flex:1;display:flex;flex-direction:column;padding:var(--space-4);overflow-y:auto;background:var(--color-bg-layout);">
+          
+          <div id="is-tool-header" style="margin-bottom:var(--space-4);">
+            <div style="display:flex;align-items:center;gap:var(--space-2);">
+              <div id="is-tool-icon" style="width:32px;height:32px;background:var(--color-primary-bg);color:var(--color-primary-6);display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:18px;">🛍</div>
+              <h2 id="is-tool-title" style="margin:0;font-size:var(--font-size-xl);font-weight:var(--font-weight-semibold);">主图</h2>
+            </div>
+            <p id="is-tool-desc" style="margin:var(--space-2) 0 0;font-size:var(--font-size-sm);color:var(--color-text-secondary);">一键生成高清白底图</p>
+          </div>
+
+          <!-- Dynamic Tool Configuration Area -->
+          <div id="is-tool-config" style="background:#fff;border:1px solid var(--color-border-secondary);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-4);">
+             <!-- Will be injected by JS -->
+          </div>
+
+          <!-- Results Area -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">
+            <h3 style="margin:0;font-size:var(--font-size);font-weight:var(--font-weight-medium);">Agent 执行结果</h3>
+          </div>
+          <div class="image-gallery" id="is-image-gallery">
+            <div class="image-card" style="grid-column:1 / -1;background:transparent;border:1px dashed var(--color-border-secondary);cursor:default;">
+              <div style="text-align:center;color:var(--color-text-tertiary);">
+                <div style="font-size:32px;margin-bottom:var(--space-2);">🖼</div>
+                <p style="font-size:var(--font-size-sm);">配置上方参数后，点击生成</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- =============================================================
+     GLOBAL: Agent Builder Modal
+     ============================================================= -->
+<div class="c-modal-mask" id="agentBuilderMask" data-open="false" onclick="if(event.target===this)closeAgentBuilder()"></div>
+<div class="c-modal" id="agentBuilderModal" data-open="false" role="dialog" style="width:640px;">
+  <header class="c-modal__head">
+    <h3 style="margin:0;font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);">创建 Agent</h3>
+    <span style="cursor:pointer;color:var(--color-text-secondary);" onclick="closeAgentBuilder()">×</span>
+  </header>
+  <div class="c-modal__body" style="gap:var(--space-3);">
+    <div class="c-field">
+      <label>头像 <span class="required">*</span></label>
+      <div style="display:flex;align-items:center;gap:var(--space-3);">
+        <div id="agentAvatarPreview" style="width:48px;height:48px;border-radius:var(--radius);background:var(--color-primary-bg);color:var(--color-primary-7);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;border:1px dashed var(--color-border);">🤖</div>
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);">点击选择 Emoji 头像</span>
+      </div>
+    </div>
+    <div class="c-field">
+      <label>名称 <span class="required">*</span></label>
+      <input class="input" placeholder="给你的 Agent 命名" id="agentNameInput" />
+    </div>
+    <div class="c-field">
+      <label>描述</label>
+      <input class="input" placeholder="简短描述这个 Agent 的用途" id="agentDescInput" />
+      <span class="hint">其他人会在 Agent 市场通过描述了解它</span>
+    </div>
+    <div class="c-field">
+      <label>指令（System Prompt）<span class="required">*</span></label>
+      <textarea class="input" style="height:120px;resize:none;padding:var(--space-3);" placeholder="定义这个 Agent 的行为、能力和限制…"></textarea>
+      <span class="hint">指令会注入到每次对话的开头，决定 Agent 的风格和输出格式</span>
+    </div>
+    <div class="c-field">
+      <label>对话开场白</label>
+      <input class="input" placeholder="用户第一次打开时，Agent 自动发送的欢迎语" />
+    </div>
+    <div class="c-field">
+      <label>默认模型</label>
+      <div class="ant-select" data-value="Claude 4" style="width:100%;">
+        <div class="ant-select-trigger" onclick="toggleAntSelect(this)"><span>Claude 4</span><span>▼</span></div>
+        <div class="ant-select-dropdown">
+          <div class="ant-select-option ant-select-option--active" onclick="selectAntOption(this,'Claude 4')">Claude 4</div>
+          <div class="ant-select-option" onclick="selectAntOption(this,'GPT-4o')">GPT-4o</div>
+          <div class="ant-select-option" onclick="selectAntOption(this,'Gemini 2.5')">Gemini 2.5</div>
+          <div class="ant-select-option" onclick="selectAntOption(this,'DeepSeek V3')">DeepSeek V3</div>
+        </div>
+      </div>
+    </div>
+    <div class="c-field">
+      <label>知识库</label>
+      <button class="btn btn--sm" style="width:fit-content;">+ 上传文件</button>
+      <span class="hint">支持 PDF、Word、TXT，最多 10 个文件</span>
+    </div>
+    <div class="c-field">
+      <label>分享设置</label>
+      <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+        <label style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--font-size);color:var(--color-text);cursor:pointer;">
+          <input type="radio" name="share" checked /> 仅自己使用
+        </label>
+        <label style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--font-size);color:var(--color-text);cursor:pointer;">
+          <input type="radio" name="share" /> 企业内部共享
+        </label>
+        <label style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--font-size);color:var(--color-text);cursor:pointer;">
+          <input type="radio" name="share" /> 允许他人 Fork（二次创作）
+        </label>
+      </div>
+    </div>
+  </div>
+  <footer class="c-modal__foot">
+    <button class="btn" onclick="closeAgentBuilder()">取消</button>
+    <button class="btn btn--primary" onclick="saveAgent()">保存 Agent</button>
+  </footer>
+</div>
+
+<!-- ============================================================
+     CONTEXT MANAGEMENT MODAL
+     ============================================================ -->
+<div id="contextMask" class="c-modal-mask" data-open="false" onclick="if(event.target===this) closeContextPanel()"></div>
+<div id="contextModal" class="c-modal" data-open="false" style="width:640px;">
+  <div class="c-modal__head">
+    <h3 style="margin:0;font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);">📋 上下文管理</h3>
+    <button style="border:none;background:none;cursor:pointer;color:var(--color-text-secondary);font-size:24px;" onclick="closeContextPanel()">×</button>
+  </div>
+  <div class="c-modal__body">
+    <!-- Context Info -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);margin-bottom:var(--space-4);padding:var(--space-3);background:var(--color-bg-spotlight);border-radius:var(--radius);">
+      <div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);">总消息数</div>
+        <div style="font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);color:var(--color-text);" id="modalMsgCount">12</div>
+      </div>
+      <div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);">上下文 Tokens</div>
+        <div style="font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);color:var(--color-text);" id="modalTokens">4,850</div>
+      </div>
+    </div>
+
+    <!-- Message List -->
+    <div style="margin-bottom:var(--space-4);">
+      <div style="font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);margin-bottom:var(--space-2);">对话历史</div>
+      <div style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:var(--space-2);" id="contextMsgList">
+        <div style="padding:var(--space-2);border-radius:var(--radius-sm);background:var(--color-bg-container);border:1px solid var(--color-border-secondary);font-size:var(--font-size-sm);display:flex;justify-content:space-between;align-items:center;">
+          <span>用户: 帮我诊断一下 Listing</span>
+          <button class="ctx-msg-delete" onclick="deleteContextMsg(1)" title="删除">✕</button>
+        </div>
+        <div style="padding:var(--space-2);border-radius:var(--radius-sm);background:var(--color-bg-container);border:1px solid var(--color-border-secondary);font-size:var(--font-size-sm);display:flex;justify-content:space-between;align-items:center;">
+          <span>助手: 我已收到您的请求…</span>
+          <button class="ctx-msg-delete" onclick="deleteContextMsg(2)" title="删除">✕</button>
+        </div>
+        <div style="padding:var(--space-2);border-radius:var(--radius-sm);background:var(--color-bg-container);border:1px solid var(--color-border-secondary);font-size:var(--font-size-sm);display:flex;justify-content:space-between;align-items:center;">
+          <span>用户: 重点是标题优化</span>
+          <button class="ctx-msg-delete" onclick="deleteContextMsg(3)" title="删除">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Context Actions -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);">
+      <button class="btn" onclick="startFromMessage()">▶ 从此处开始</button>
+      <button class="btn" style="color:var(--color-error);border-color:var(--color-error-border);" onclick="clearAllContext()">🗑 清空全部</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     GLOBAL CHAT WIDGET (FLOAT BUTTON)
+     ============================================================ -->
+<div id="chatWidgetFloat" class="chat-widget-float" title="AI 助手">
+  <div class="chat-widget-icon">💬</div>
+  <div class="chat-widget-badge" id="chatWidgetBadge" style="display:none;">1</div>
+</div>
+
+<!-- Global Chat Window -->
+<div id="chatWindowMask" class="chat-window-mask" data-open="false" onclick="if(event.target===this) closeChatWindow()"></div>
+<div id="chatWindowWidget" class="chat-window-widget" data-open="false">
+  <div class="chat-window__header">
+    <div class="chat-window__title">
+      <span style="font-size:24px;margin-right:var(--space-2);">💬</span>
+      <div>
+        <div style="font-weight:var(--font-weight-semibold);font-size:var(--font-size);">AI 助手</div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);">Listing 优化专家</div>
+      </div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:var(--space-2);">
+      <button class="chat-window__btn" onclick="toggleWidgetSettings()" title="设置">⚙️</button>
+      <button class="chat-window__btn" onclick="closeChatWindow()" title="关闭">✕</button>
+    </div>
+  </div>
+
+  <!-- Widget Messages -->
+  <div class="chat-window__messages" id="widgetMessages">
+    <div class="widget-msg widget-msg--bot">
+      <div class="widget-msg__bubble">👋 你好！有什么可以帮你的？</div>
+    </div>
+  </div>
+
+  <!-- Widget Settings Panel (initially hidden) -->
+  <div class="chat-window__settings" id="widgetSettings" style="display:none;">
+    <div style="font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);margin-bottom:var(--space-2);">快速切换 Agent</div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-1);" id="widgetAgentList">
+      <div style="padding:var(--space-2);border-radius:var(--radius-sm);background:var(--color-primary-bg);cursor:pointer;font-size:var(--font-size-sm);">📝 Listing 优化专家</div>
+      <div style="padding:var(--space-2);border-radius:var(--radius-sm);background:var(--color-bg-spotlight);cursor:pointer;font-size:var(--font-size-sm);">🖼 图片生成助手</div>
+      <div style="padding:var(--space-2);border-radius:var(--radius-sm);background:var(--color-bg-spotlight);cursor:pointer;font-size:var(--font-size-sm);">📊 广告诊断师</div>
+    </div>
+  </div>
+
+  <!-- Widget Input -->
+  <div class="chat-window__input">
+    <textarea id="widgetChatInput" placeholder="输入消息…" rows="1"></textarea>
+    <button class="widget-send-btn" onclick="sendWidgetChat()">➤</button>
+  </div>
+</div>
+
+<script src="./script.js"></script>
+</body>
+</html>
